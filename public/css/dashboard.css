@@ -1,0 +1,142 @@
+/* Estilo geral */
+:root {
+    --bg-dark: #1a2035;
+    --bg-light: #272d47;
+    --primary-green: #00a78e;
+    --text-light: #d0d2d6;
+    --text-gray: #8c92a1;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    margin: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-light);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #444;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.sidebar-header span {
+    color: var(--primary-green);
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+}
+
+.sidebar-nav a {
+    display: block;
+    padding: 15px 20px;
+    color: var(--text-gray);
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-nav a:hover {
+    background-color: var(--bg-dark);
+    color: white;
+}
+
+.sidebar-nav a.active {
+    background-color: var(--primary-green);
+    color: white;
+    font-weight: bold;
+}
+
+.sidebar-nav a i {
+    margin-right: 15px;
+    width: 20px; /* Alinha os ícones */
+}
+
+/* Conteúdo Principal */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+}
+
+.main-header h2 {
+    margin: 0;
+    font-size: 2em;
+}
+.main-header p {
+    color: var(--text-gray);
+    margin-top: 5px;
+}
+
+/* Grid de Widgets */
+.widget-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.widget {
+    background-color: var(--bg-light);
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.widget-icon {
+    font-size: 2.5em;
+    color: var(--primary-green);
+    margin-right: 20px;
+}
+
+.widget-info h3 {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 1em;
+}
+
+.widget-info p {
+    margin: 5px 0 0;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+}
+
+/* Widgets Grandes */
+.large-widget {
+    grid-column: span 2; /* Faz o widget ocupar 2 colunas */
+    display: block;
+}
+.large-widget h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+.large-widget ul {
+    list-style: none;
+    padding-left: 0;
+}
+.large-widget li, .large-widget p {
+    padding: 8px 0;
+    color: var(--text-gray);
+}

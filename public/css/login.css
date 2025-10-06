@@ -1,0 +1,71 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    display:flex;justify-content:center;align-items:center;min-height:100vh;
+    background:linear-gradient(135deg,#2a9d8f,#264653);color:#f0f0f0;padding:1rem
+}
+.login-container{
+    background-color:rgba(38,80,75,.85);padding:3rem 2.5rem;border-radius:15px;
+    box-shadow:0 8px 32px rgba(0,0,0,.4);backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.15);width:100%;max-width:420px;text-align:center
+}
+.logo p{font-size:.8rem;line-height:1.2;font-weight:bold;color:#ccc;margin-bottom:1.5rem;letter-spacing:.5px}
+h1{font-size:1.6rem;letter-spacing:1px;margin-bottom:.8rem;font-weight:700;color:#e0e0e0}
+.login-container p{font-size:.95rem;margin-bottom:2.5rem;color:#b0b0b0}
+
+/* Labels */
+.input-label{display:block;text-align:left;margin-bottom:.5rem;font-size:.9rem;color:#ccc;font-weight:500}
+
+/* Input group */
+.input-group{margin-bottom:1.8rem}
+.input-group .field{position:relative;display:block;width:100%}
+
+/* Ícones dentro do campo */
+.input-icon,.toggle-password{
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;
+    color:#aaa;line-height:0;z-index:2
+}
+.input-icon{pointer-events:none}
+.toggle-password{cursor:pointer}
+
+/* Esconde QUALQUER <i> direto do grupo (regra antiga que causava o ícone solto) */
+.input-group>i{display:none!important}
+
+/* Input */
+.input-group .field input{
+    width:100%;padding:.9rem 1.2rem;padding-right:44px;
+    background-color:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:8px;color:#fff;font-size:1rem;transition:border-color .3s,background-color .3s
+}
+.input-group .field input:focus{outline:none;border-color:#007bff;background-color:rgba(255,255,255,.15)}
+.input-group .field input::placeholder{color:#999}
+
+/* Switch "Manter Conectado" */
+.options{display:flex;justify-content:flex-start;align-items:center;margin-top:-.5rem;margin-bottom:2.5rem;font-size:.9rem;color:#ccc}
+.options label{display:flex;align-items:center;cursor:pointer;gap:.5rem}
+.options input[type="checkbox"]{
+    appearance:none;-webkit-appearance:none;width:40px;height:20px;background-color:rgba(255,255,255,.2);
+    border-radius:10px;position:relative;cursor:pointer;transition:background-color .3s
+}
+.options input[type="checkbox"]::before{
+    content:'';width:16px;height:16px;background-color:#fff;border-radius:50%;
+    position:absolute;top:2px;left:2px;transition:transform .3s
+}
+.options input[type="checkbox"]:checked{background-color:#007bff}
+.options input[type="checkbox"]:checked::before{transform:translateX(20px)}
+
+/* Botão */
+.btn-submit{
+    width:100%;padding:1.1rem;background-color:#007bff;border:none;border-radius:8px;color:#fff;
+    font-size:1.1rem;font-weight:bold;cursor:pointer;transition:background-color .3s,transform .2s
+}
+.btn-submit:hover{background-color:#0056b3;transform:translateY(-2px)}
+.btn-submit:active{transform:translateY(0)}
+
+/* Responsivo */
+@media (max-width:480px){
+    .login-container{padding:2rem 1.5rem}
+    h1{font-size:1.4rem}
+    .btn-submit{font-size:1rem;padding:.9rem}
+}
