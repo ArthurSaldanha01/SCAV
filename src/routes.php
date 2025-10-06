@@ -6,6 +6,7 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use App\Controller\VeiculoController;
 use App\Controller\DashboardController;
+use App\Controller\MotoristaController;
 
 return function (App $app) {
 
@@ -50,6 +51,15 @@ return function (App $app) {
         
         $group->post('/{id}/delete', [VeiculoController::class, 'destroy'])->setName('veiculos.destroy');
         
+    });
+
+    $app->group('/motoristas', function (RouteCollectorProxy $group) {
+        $group->get('', [MotoristaController::class, 'index'])->setName('motoristas.index');
+        $group->get('/novo', [MotoristaController::class, 'create'])->setName('motoristas.create');
+        $group->post('', [MotoristaController::class, 'store'])->setName('motoristas.store');
+        $group->get('/{id}/edit', [MotoristaController::class, 'edit'])->setName('motoristas.edit');
+        $group->post('/{id}/update', [MotoristaController::class, 'update'])->setName('motoristas.update');
+        $group->post('/{id}/delete', [MotoristaController::class, 'destroy'])->setName('motoristas.destroy');
     });
 };
 

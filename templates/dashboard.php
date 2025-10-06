@@ -17,7 +17,7 @@
                 <ul>
                     <li><a href="/scav/public/dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                     <li><a href="#"><i class="fas fa-users"></i> Usuários</a></li>
-                    <li><a href="#"><i class="fas fa-id-card"></i> Motoristas</a></li>
+                    <li><a href="/scav/public/motoristas"><i class="fas fa-id-card"></i> Motoristas</a></li>
                     <li><a href="/scav/public/veiculos"><i class="fas fa-car"></i> Veículos</a></li>
                     <li><a href="#"><i class="fas fa-cog"></i> Configuração</a></li>
                 </ul>

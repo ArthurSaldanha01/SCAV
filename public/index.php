@@ -5,6 +5,8 @@ use Slim\Views\PhpRenderer;
 use App\Controller\VeiculoController;
 use App\Repository\VeiculoRepository;
 use App\Controller\DashboardController;
+use App\Controller\MotoristaController;
+use App\Repository\MotoristaRepository;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -38,6 +40,14 @@ $container->set(VeiculoController::class, function (Container $c) {
 
 $container->set(DashboardController::class, function (Container $c) {
     return new DashboardController($c->get('view'));
+});
+
+$container->set(MotoristaRepository::class, function (Container $c) {
+    return new MotoristaRepository($c->get('db'));
+});
+
+$container->set(MotoristaController::class, function (Container $c) {
+    return new MotoristaController($c->get('view'), $c->get(MotoristaRepository::class));
 });
 
 AppFactory::setContainer($container);
