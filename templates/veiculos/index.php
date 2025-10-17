@@ -9,21 +9,12 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { color: #004d40; border-bottom: 2px solid #00796b; padding-bottom: 10px; }
-        
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .btn { padding: 10px 15px; border-radius: 5px; text-decoration: none; color: white; display: inline-block; border: none; cursor: pointer; }
         .btn-primary { background-color: #00796b; }
         .btn-primary:hover { background-color: #004d40; }
-        
         .btn-secondary { background-color: #6c757d; }
         .btn-secondary:hover { background-color: #5a6268; }
-
         .btn-edit { background-color: #fbc02d; color: #333; padding: 5px 10px; font-size: 0.9em; }
         .btn-edit:hover { background-color: #f9a825; }
         .btn-delete { background-color: #d32f2f; padding: 5px 10px; font-size: 0.9em; }
@@ -47,9 +38,12 @@
             <a href="/scav/public/dashboard" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Voltar para o Dashboard
             </a>
-            <a href="/scav/public/veiculos/novo" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Adicionar Novo Veículo
-            </a>
+            
+            <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
+                <a href="/scav/public/veiculos/novo" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar Novo Veículo
+                </a>
+            <?php endif; ?>
         </div>
 
         <?php if (empty($veiculos)): ?>
@@ -61,7 +55,9 @@
                         <th>Placa</th>
                         <th>Modelo</th>
                         <th>Status</th>
-                        <th>Ações</th>
+                        <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
+                            <th>Ações</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,12 +72,14 @@
                                     <span class="status status-nao-oficial">Não Oficial</span>
                                 <?php endif; ?>
                             </td>
-                            <td class="actions">
-                                <a href="/scav/public/veiculos/<?= $veiculo['id'] ?>/edit" class="btn btn-edit">Editar</a>
-                                <form action="/scav/public/veiculos/<?= $veiculo['id'] ?>/delete" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este veículo?');">
-                                    <button type="submit" class="btn btn-delete">Excluir</button>
-                                </form>
-                            </td>
+                            <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
+                                <td class="actions">
+                                    <a href="/scav/public/veiculos/<?= $veiculo['id'] ?>/edit" class="btn btn-edit">Editar</a>
+                                    <form action="/scav/public/veiculos/<?= $veiculo['id'] ?>/delete" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este veículo?');">
+                                        <button type="submit" class="btn btn-delete">Excluir</button>
+                                    </form>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -90,3 +88,4 @@
     </div>
 </body>
 </html>
+

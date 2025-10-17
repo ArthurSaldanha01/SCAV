@@ -20,9 +20,15 @@ class MotoristaController
 
     public function index(Request $request, Response $response): Response
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $motoristas = $this->repository->findAll();
+
         return $this->view->render($response, 'motoristas/index.php', [
-            'motoristas' => $motoristas
+            'motoristas' => $motoristas,
+            'perfilUsuario' => $_SESSION['user_profile'] ?? null
         ]);
     }
 
@@ -67,3 +73,4 @@ class MotoristaController
         return $response->withHeader('Location', '/scav/public/motoristas')->withStatus(302);
     }
 }
+
