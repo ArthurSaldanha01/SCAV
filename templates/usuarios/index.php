@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Veículos - SCAV</title>
+    <title>Gestão de Utilizadores - SCAV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
@@ -25,58 +25,58 @@
         tr:nth-child(even) { background-color: #f9f9f9; }
         .actions { display: flex; gap: 10px; }
         .empty-message { text-align: center; color: #777; padding: 20px; }
-        .status { padding: 5px 8px; border-radius: 12px; color: white; font-weight: bold; font-size: 0.8em; }
-        .status-oficial { background-color: #2e7d32; }
-        .status-nao-oficial { background-color: #757575; }
+        .profile-badge { padding: 4px 12px; border-radius: 12px; color: white; font-weight: 500; font-size: 0.8em; text-align: center; }
+        .profile-admin { background-color: #c62828; }
+        .profile-gestor { background-color: #0277bd; }
+        .profile-portaria { background-color: #f57f17; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Gestão de Veículos Oficiais</h1>
+        <h1>Gestão de Utilizadores</h1>
         
         <div class="header-actions">
-            <a href="/scav/public/dashboard" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar para o Dashboard
-            </a>
+            <a href="/scav/public/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar para o Dashboard</a>
             
             <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
-                <a href="/scav/public/veiculos/novo" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Adicionar Novo Veículo
-                </a>
+                <a href="/scav/public/usuarios/novo" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar Novo Utilizador</a>
             <?php endif; ?>
         </div>
 
-        <?php if (empty($veiculos)): ?>
-            <p class="empty-message">Nenhum veículo cadastrado ainda.</p>
+        <?php if (empty($usuarios)): ?>
+            <p class="empty-message">Nenhum utilizador registado ainda.</p>
         <?php else: ?>
             <table>
                 <thead>
                     <tr>
-                        <th>Placa</th>
-                        <th>Modelo</th>
-                        <th>Status</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Perfil</th>
                         <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
                             <th>Ações</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($veiculos as $veiculo): ?>
+                    <?php foreach ($usuarios as $usuario): ?>
                         <tr>
-                            <td><?= htmlspecialchars($veiculo['placa']) ?></td>
-                            <td><?= htmlspecialchars($veiculo['modelo']) ?></td>
+                            <td><?= htmlspecialchars($usuario['nome']) ?></td>
+                            <td><?= htmlspecialchars($usuario['email']) ?></td>
                             <td>
-                                <?php if ($veiculo['isOficial']): ?>
-                                    <span class="status status-oficial">Oficial</span>
-                                <?php else: ?>
-                                    <span class="status status-nao-oficial">Não Oficial</span>
-                                <?php endif; ?>
+                                <?php
+                                    $perfil = strtolower($usuario['perfil']);
+                                    $classePerfil = 'profile-';
+                                    if ($perfil === 'administrador') $classePerfil .= 'admin';
+                                    elseif ($perfil === 'gestor') $classePerfil .= 'gestor';
+                                    else $classePerfil .= 'portaria';
+                                ?>
+                                <span class="profile-badge <?= $classePerfil ?>"><?= htmlspecialchars($usuario['perfil']) ?></span>
                             </td>
                             <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
                                 <td class="actions">
-                                    <a href="/scav/public/veiculos/<?= $veiculo['id'] ?>/edit" class="btn btn-edit">Editar</a>
-                                    <form action="/scav/public/veiculos/<?= $veiculo['id'] ?>/delete" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este veículo?');">
-                                        <button type="submit" class="btn btn-delete">Excluir</button>
+                                    <a href="/scav/public/usuarios/<?= $usuario['id'] ?>/edit" class="btn btn-edit">Editar</a>
+                                    <form action="/scav/public/usuarios/<?= $usuario['id'] ?>/delete" method="POST" onsubmit="return confirm('Tem a certeza que deseja apagar este utilizador?');">
+                                        <button type="submit" class="btn btn-delete">Apagar</button>
                                     </form>
                                 </td>
                             <?php endif; ?>
@@ -88,4 +88,3 @@
     </div>
 </body>
 </html>
-

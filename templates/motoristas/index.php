@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Veículos - SCAV</title>
+    <title>Gestão de Motoristas - SCAV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
@@ -25,57 +25,55 @@
         tr:nth-child(even) { background-color: #f9f9f9; }
         .actions { display: flex; gap: 10px; }
         .empty-message { text-align: center; color: #777; padding: 20px; }
-        .status { padding: 5px 8px; border-radius: 12px; color: white; font-weight: bold; font-size: 0.8em; }
-        .status-oficial { background-color: #2e7d32; }
-        .status-nao-oficial { background-color: #757575; }
+        .status { padding: 5px 8px; border-radius: 12px; color: white; font-weight: bold; font-size: 0.8em; text-align: center; }
+        .status-ativo { background-color: #2e7d32; }
+        .status-inativo { background-color: #757575; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Gestão de Veículos Oficiais</h1>
+        <h1>Gestão de Motoristas</h1>
         
         <div class="header-actions">
-            <a href="/scav/public/dashboard" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar para o Dashboard
-            </a>
+            <a href="/scav/public/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar para o Dashboard</a>
             
+            <!-- Botão "Adicionar" visível apenas para o Administrador -->
             <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
-                <a href="/scav/public/veiculos/novo" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Adicionar Novo Veículo
-                </a>
+                <a href="/scav/public/motoristas/novo" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar Novo Motorista</a>
             <?php endif; ?>
         </div>
 
-        <?php if (empty($veiculos)): ?>
-            <p class="empty-message">Nenhum veículo cadastrado ainda.</p>
+        <?php if (empty($motoristas)): ?>
+            <p class="empty-message">Nenhum motorista cadastrado ainda.</p>
         <?php else: ?>
             <table>
                 <thead>
                     <tr>
-                        <th>Placa</th>
-                        <th>Modelo</th>
+                        <th>Nome</th>
+                        <th>CNH</th>
                         <th>Status</th>
+                        <!-- Coluna "Ações" visível apenas para o Administrador -->
                         <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
                             <th>Ações</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($veiculos as $veiculo): ?>
+                    <?php foreach ($motoristas as $motorista): ?>
                         <tr>
-                            <td><?= htmlspecialchars($veiculo['placa']) ?></td>
-                            <td><?= htmlspecialchars($veiculo['modelo']) ?></td>
+                            <td><?= htmlspecialchars($motorista['nome']) ?></td>
+                            <td><?= htmlspecialchars($motorista['cnh']) ?></td>
                             <td>
-                                <?php if ($veiculo['isOficial']): ?>
-                                    <span class="status status-oficial">Oficial</span>
+                                <?php if ($motorista['status'] === 'Ativo'): ?>
+                                    <span class="status status-ativo">Ativo</span>
                                 <?php else: ?>
-                                    <span class="status status-nao-oficial">Não Oficial</span>
+                                    <span class="status status-inativo">Inativo</span>
                                 <?php endif; ?>
                             </td>
                             <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
                                 <td class="actions">
-                                    <a href="/scav/public/veiculos/<?= $veiculo['id'] ?>/edit" class="btn btn-edit">Editar</a>
-                                    <form action="/scav/public/veiculos/<?= $veiculo['id'] ?>/delete" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este veículo?');">
+                                    <a href="/scav/public/motoristas/<?= $motorista['id'] ?>/edit" class="btn btn-edit">Editar</a>
+                                    <form action="/scav/public/motoristas/<?= $motorista['id'] ?>/delete" method="POST" onsubmit="return confirm('Tem a certeza que deseja excluir este motorista?');">
                                         <button type="submit" class="btn btn-delete">Excluir</button>
                                     </form>
                                 </td>

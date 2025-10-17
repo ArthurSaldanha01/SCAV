@@ -15,12 +15,22 @@ class DashboardController
         $this->view = $view;
     }
 
+    /**
+     * Exibe a página principal da dashboard, buscando dados da sessão.
+     */
     public function index(Request $request, Response $response): Response
     {
+        // Garante que a sessão PHP está iniciada para podermos ler os dados
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $dados = [
-            'nomeUsuario' => 'Administrador'
+            'nomeUsuario' => $_SESSION['user_name'] ?? 'Utilizador',
+            'perfilUsuario' => $_SESSION['user_profile'] ?? null
         ];
         
         return $this->view->render($response, 'dashboard.php', $dados);
     }
 }
+
