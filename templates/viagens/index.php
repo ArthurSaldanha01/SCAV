@@ -66,9 +66,15 @@
                                 ?>
                                 <span class="status <?= $statusClass ?>"><?= htmlspecialchars($viagem['status']) ?></span>
                             </td>
-                            <td>
-                                <!-- Adicionar botões de editar/cancelar aqui -->
-                                <button class="btn btn-cancel">Cancelar</button>
+                            <td>                                    
+                                <form action="/scav/public/viagens/<?= $viagem['id'] ?>/cancelar" method="POST" style="display: inline;">
+                                    <button type="submit" 
+                                            class="btn btn-cancel" 
+                                            <?= ($viagem['status'] !== 'Autorizada') ? 'disabled title="Apenas viagens autorizadas podem ser canceladas"' : 'title="Cancelar viagem"' ?>>
+                                        Cancelar
+                                    </button>
+                                </form>
+
                             </td>
                         </tr>
                     <?php endforeach; ?>

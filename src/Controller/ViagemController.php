@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\MotoristaRepository;
 use App\Repository\VeiculoRepository;
 use App\Repository\ViagemRepository;
+use App\Repository\AuditoriaRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\PhpRenderer;
@@ -15,17 +16,20 @@ class ViagemController
     private ViagemRepository $viagemRepo;
     private VeiculoRepository $veiculoRepo;
     private MotoristaRepository $motoristaRepo;
+    private AuditoriaRepository $auditoriaRepo;
 
     public function __construct(
         PhpRenderer $view,
         ViagemRepository $viagemRepo,
         VeiculoRepository $veiculoRepo,
-        MotoristaRepository $motoristaRepo
+        MotoristaRepository $motoristaRepo,
+        AuditoriaRepository $auditoriaRepo
     ) {
         $this->view = $view;
         $this->viagemRepo = $viagemRepo;
         $this->veiculoRepo = $veiculoRepo;
         $this->motoristaRepo = $motoristaRepo;
+        $this->auditoriaRepo = $auditoriaRepo;
     }
 
     public function index(Request $request, Response $response): Response
@@ -54,17 +58,38 @@ class ViagemController
         }
         
         $data = $request->getParsedBody();
-
-        $data['gestor_id'] = $_SESSION['user_id'] ?? null;
+        $usuarioId = (int)($_SESSION['user_id'] ?? 0);
+        $data['gestor_id'] = $usuarioId;
 
         if (empty($data['gestor_id']) || empty($data['veiculo_id']) || empty($data['motorista_id'])) {
-
             return $response->withHeader('Location', '/scav/public/viagens/novo')->withStatus(302);
         }
         
         $data['codigoAutorizacao'] = strtoupper(uniqid('SCAV-'));
 
         $this->viagemRepo->create($data);
+
+        $detalhes = "Viagem autorizada. Código: {$data['codigoAutorizacao']}. Veículo ID: {$data['veiculo_id']}, Motorista ID: {$data['motorista_id']}.";
+        $this->auditoriaRepo->registrar('CRIACAO_VIAGEM', $detalhes, $usuarioId);
+
+        return $response->withHeader('Location', '/scav/public/viagens')->withStatus(302);
+    }
+
+    public function cancelar(Request $request, Response $response, array $args): Response
+    {
+        $id = $args['id'] ?? null;
+        if ($id === null) {
+            return $response->withHeader('Location', '/scav/public/viagens')->withStatus(302);
+        }
+
+        $this->viagemRepo->updateStatus((int)$id, 'Cancelada');
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $usuarioId = (int)($_SESSION['user_id'] ?? 0);
+        $detalhes = "Viagem ID: {$id} foi cancelada.";
+        $this->auditoriaRepo->registrar('CANCELAMENTO_VIAGEM', $detalhes, $usuarioId);
 
         return $response->withHeader('Location', '/scav/public/viagens')->withStatus(302);
     }
