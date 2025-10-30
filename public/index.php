@@ -12,6 +12,9 @@ use App\Repository\ViagemRepository;
 use App\Controller\LoginController;
 use App\Controller\UsuarioController;
 use App\Repository\UsuarioRepository;
+use App\Controller\PortariaController;
+use App\Repository\AuditoriaRepository;
+use App\Controller\AuditoriaController;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -40,11 +43,27 @@ $container->set(VeiculoRepository::class, function (Container $c) {
 });
 
 $container->set(VeiculoController::class, function (Container $c) {
-    return new VeiculoController($c->get('view'), $c->get(VeiculoRepository::class));
+    return new VeiculoController(
+        $c->get('view'), 
+        $c->get(VeiculoRepository::class),
+        $c->get(AuditoriaRepository::class)
+    );
 });
 
 $container->set(DashboardController::class, function (Container $c) {
-    return new DashboardController($c->get('view'));
+    return new DashboardController(
+        $c->get('view'),
+        $c->get(ViagemRepository::class),
+        $c->get(VeiculoRepository::class)
+    );
+});
+
+$container->set(AuditoriaRepository::class, function (Container $c) {
+    return new AuditoriaRepository($c->get('db'));
+});
+
+$container->set(AuditoriaController::class, function (Container $c) {
+    return new AuditoriaController($c->get('view'), $c->get(AuditoriaRepository::class));
 });
 
 $container->set(MotoristaRepository::class, function (Container $c) {
@@ -76,8 +95,13 @@ $container->set(ViagemController::class, function (Container $c) {
         $c->get('view'),
         $c->get(ViagemRepository::class),
         $c->get(VeiculoRepository::class),
-        $c->get(MotoristaRepository::class)
+        $c->get(MotoristaRepository::class),
+        $c->get(AuditoriaRepository::class)
     );
+});
+
+$container->set(PortariaController::class, function (Container $c) {
+    return new PortariaController($c->get('view'), $c->get(ViagemRepository::class));
 });
 
 AppFactory::setContainer($container);
@@ -91,4 +115,3 @@ $routes($app);
 $app->addErrorMiddleware(true, true, true);
 
 $app->run();
-

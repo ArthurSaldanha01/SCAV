@@ -54,5 +54,84 @@ class ViagemRepository
         ]);
     }
 
-    // Você pode adicionar os métodos findById, update e delete aqui seguindo a mesma lógica.
+    public function findViagensAutorizadasParaHoje(): array
+    {
+        $hoje = date('Y-m-d');
+        
+        $sql = "
+            SELECT 
+                v.codigoAutorizacao,
+                v.observacoes,
+                ve.modelo AS veiculo_modelo,
+                ve.placa AS veiculo_placa,
+                m.nome AS motorista_nome
+            FROM viagens v
+            JOIN veiculos ve ON v.veiculo_id = ve.id
+            JOIN motoristas m ON v.motorista_id = m.id
+            WHERE v.dataPrevista = :hoje AND v.status = 'Autorizada'
+            ORDER BY v.created_at ASC
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['hoje' => $hoje]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateStatus(int $id, string $status): bool
+    {
+        try {
+            $sql = "UPDATE viagens SET status = :status WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':status', $status);
+            $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            return false;
+        }
+    }
+
+    // MÉTODOS NOVOS PARA O DASHBOARD
+    
+    public function countViagensParaHoje(): int
+    {
+        $hoje = date('Y-m-d');
+        $sql = "SELECT COUNT(id) FROM viagens WHERE dataPrevista = :hoje AND status != 'Cancelada'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['hoje' => $hoje]);
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function findProximaSaidaDeHoje(): ?array
+    {
+        $hoje = date('Y-m-d');
+        $sql = "
+            SELECT v.created_at, ve.placa 
+            FROM viagens v
+            JOIN veiculos ve ON v.veiculo_id = ve.id
+            WHERE v.dataPrevista = :hoje AND v.status = 'Autorizada'
+            ORDER BY v.created_at ASC 
+            LIMIT 1
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['hoje' => $hoje]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
+
+    public function findProximasViagensAgendadas(int $limite = 3): array
+    {
+        $hoje = date('Y-m-d');
+        $sql = "
+            SELECT v.dataPrevista, v.finalidade, ve.modelo AS veiculo_modelo, ve.placa AS veiculo_placa
+            FROM viagens v
+            JOIN veiculos ve ON v.veiculo_id = ve.id
+            WHERE v.dataPrevista >= :hoje AND v.status = 'Autorizada'
+            ORDER BY v.dataPrevista ASC, v.created_at ASC
+            LIMIT :limite
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':hoje', $hoje);
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
