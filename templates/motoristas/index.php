@@ -37,7 +37,6 @@
         <div class="header-actions">
             <a href="/scav/public/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar para o Dashboard</a>
             
-            <!-- Botão "Adicionar" visível apenas para o Administrador -->
             <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
                 <a href="/scav/public/motoristas/novo" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar Novo Motorista</a>
             <?php endif; ?>
@@ -52,7 +51,6 @@
                         <th>Nome</th>
                         <th>CNH</th>
                         <th>Status</th>
-                        <!-- Coluna "Ações" visível apenas para o Administrador -->
                         <?php if (($perfilUsuario ?? null) === 'Administrador'): ?>
                             <th>Ações</th>
                         <?php endif; ?>

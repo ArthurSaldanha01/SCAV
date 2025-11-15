@@ -82,15 +82,74 @@ class ViagemRepository
             $sql = "UPDATE viagens SET status = :status WHERE id = :id";
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':status', $status);
-            $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (\PDOException $e) {
             return false;
         }
     }
 
-    // MÉTODOS NOVOS PARA O DASHBOARD
-    
+    public function countFiltered(array $filtro = []): int
+    {
+        $sql = "SELECT COUNT(v.id)
+                FROM viagens v
+                JOIN usuarios u ON v.gestor_id = u.id
+                JOIN veiculos veic ON v.veiculo_id = veic.id
+                JOIN motoristas m ON v.motorista_id = m.id
+                WHERE 1=1";
+
+        $params = [];
+
+        if (!empty($filtro['status'])) {
+            $sql .= " AND v.status = :status";
+            $params['status'] = $filtro['status'];
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function findPaginatedFiltered(array $filtro, int $limit, int $offset): array
+    {
+        $sql = "
+            SELECT 
+                v.*, 
+                u.nome as gestor_nome,
+                veic.modelo as veiculo_modelo,
+                veic.placa as veiculo_placa,
+                m.nome as motorista_nome
+            FROM viagens v
+            JOIN usuarios u ON v.gestor_id = u.id
+            JOIN veiculos veic ON v.veiculo_id = veic.id
+            JOIN motoristas m ON v.motorista_id = m.id
+            WHERE 1=1
+        ";
+
+        $params = [];
+
+        if (!empty($filtro['status'])) {
+            $sql .= " AND v.status = :status";
+            $params['status'] = $filtro['status'];
+        }
+
+        $sql .= " ORDER BY v.dataPrevista DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(":{$key}", $value);
+        }
+
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function countViagensParaHoje(): int
     {
         $hoje = date('Y-m-d');
