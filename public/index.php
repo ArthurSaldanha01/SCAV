@@ -1,7 +1,11 @@
 <?php
+
+date_default_timezone_set('America/Bahia');
+
 use DI\Container;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
+
 use App\Controller\VeiculoController;
 use App\Repository\VeiculoRepository;
 use App\Controller\DashboardController;
@@ -15,6 +19,9 @@ use App\Repository\UsuarioRepository;
 use App\Controller\PortariaController;
 use App\Repository\AuditoriaRepository;
 use App\Controller\AuditoriaController;
+use App\Controller\AcessoController;
+use App\Controller\RelatorioController;
+use App\Repository\RegistroAcessoRepository;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -23,15 +30,11 @@ $container = new Container();
 $container->set('db', function () {
     $dsn = 'mysql:host=localhost;dbname=scav;charset=utf8mb4';
     $options = [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
+        PDO::ATTR_EMULATE_PREPARES => false,
     ];
-    try {
-        return new PDO($dsn, 'root', '');
-    } catch (\PDOException $e) {
-        throw new \PDOException($e->getMessage(), (int)$e->getCode());
-    }
+    return new PDO($dsn, 'root', '', $options);
 });
 
 $container->set('view', function () {
@@ -44,7 +47,7 @@ $container->set(VeiculoRepository::class, function (Container $c) {
 
 $container->set(VeiculoController::class, function (Container $c) {
     return new VeiculoController(
-        $c->get('view'), 
+        $c->get('view'),
         $c->get(VeiculoRepository::class),
         $c->get(AuditoriaRepository::class)
     );
@@ -102,6 +105,18 @@ $container->set(ViagemController::class, function (Container $c) {
 
 $container->set(PortariaController::class, function (Container $c) {
     return new PortariaController($c->get('view'), $c->get(ViagemRepository::class));
+});
+
+$container->set(RegistroAcessoRepository::class, function (Container $c) {
+    return new RegistroAcessoRepository($c->get('db'));
+});
+
+$container->set(AcessoController::class, function (Container $c) {
+    return new AcessoController($c->get(RegistroAcessoRepository::class), getenv('ALPR_BEARER_TOKEN') ?: 'troque');
+});
+
+$container->set(RelatorioController::class, function (Container $c) {
+    return new RelatorioController($c->get('db'));
 });
 
 AppFactory::setContainer($container);

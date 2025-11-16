@@ -32,12 +32,6 @@
                 </div>
             </div>
 
-            <div class="options">
-                <label>
-                    <input type="checkbox" name="manter_conectado"> Manter Conectado
-                </label>
-            </div>
-
             <button type="submit" class="btn-submit">ENTRAR</button>
         </form>
     </main>

@@ -26,6 +26,11 @@
         .status-autorizada { background-color: #1976d2; }
         .status-realizada { background-color: #2e7d32; }
         .status-cancelada { background-color: #757575; }
+        .filters { margin: 15px 0; display: flex; justify-content: flex-end; gap: 10px; }
+        select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        .pagination { margin-top: 20px; text-align: center; }
+        .pagination a { padding: 8px 12px; margin: 0 4px; background: #00796b; color: white; text-decoration: none; border-radius: 4px; }
+        .pagination a.active { background: #004d40; }
     </style>
 </head>
 <body>
@@ -37,8 +42,16 @@
             <a href="/scav/public/viagens/novo" class="btn btn-primary"><i class="fas fa-plus"></i> Autorizar Nova Viagem</a>
         </div>
 
+        <form method="GET" class="filters">
+            <select name="estado" onchange="this.form.submit()">
+                <option value="">Todos os estados</option>
+                <option value="Autorizada" <?= isset($_GET['estado']) && $_GET['estado']=='Autorizada' ? 'selected' : '' ?>>Autorizada</option>
+                <option value="Cancelada" <?= isset($_GET['estado']) && $_GET['estado']=='Cancelada' ? 'selected' : '' ?>>Cancelada</option>
+            </select>
+        </form>
+
         <?php if (empty($viagens)): ?>
-            <p class="empty-message">Nenhuma viagem autorizada ainda.</p>
+            <p class="empty-message">Nenhuma viagem encontrada.</p>
         <?php else: ?>
             <table>
                 <thead>
@@ -61,12 +74,10 @@
                             <td><?= htmlspecialchars($viagem['gestor_nome']) ?></td>
                             <td><?= date('d/m/Y', strtotime($viagem['dataPrevista'])) ?></td>
                             <td>
-                                <?php 
-                                    $statusClass = 'status-' . strtolower($viagem['status']);
-                                ?>
+                                <?php $statusClass = 'status-' . strtolower($viagem['status']); ?>
                                 <span class="status <?= $statusClass ?>"><?= htmlspecialchars($viagem['status']) ?></span>
                             </td>
-                            <td>                                    
+                            <td>
                                 <form action="/scav/public/viagens/<?= $viagem['id'] ?>/cancelar" method="POST" style="display: inline;">
                                     <button type="submit" 
                                             class="btn btn-cancel" 
@@ -74,12 +85,23 @@
                                         Cancelar
                                     </button>
                                 </form>
-
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+
+            <?php if ($totalPaginas > 1): ?>
+                <div class="pagination">
+                    <?php for ($p = 1; $p <= $totalPaginas; $p++): ?>
+                        <a href="?page=<?= $p ?><?= isset($_GET['estado']) ? '&estado='.$_GET['estado'] : '' ?>" 
+                           class="<?= ($p == $paginaAtual) ? 'active' : '' ?>">
+                           <?= $p ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+            <?php endif; ?>
+
         <?php endif; ?>
     </div>
 </body>

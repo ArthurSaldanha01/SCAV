@@ -34,9 +34,29 @@ class ViagemController
 
     public function index(Request $request, Response $response): Response
     {
-        $viagens = $this->viagemRepo->findAll();
+        $params = $request->getQueryParams();
+
+        $estado = $params['estado'] ?? '';
+        $paginaAtual = isset($params['page']) ? (int)$params['page'] : 1;
+        if ($paginaAtual < 1) $paginaAtual = 1;
+
+        $porPagina = 8;
+        $offset = ($paginaAtual - 1) * $porPagina;
+
+        $filtro = [];
+        if ($estado !== '') {
+            $filtro['status'] = $estado;
+        }
+
+        $totalRegistros = $this->viagemRepo->countFiltered($filtro);
+        $totalPaginas = (int)ceil($totalRegistros / $porPagina);
+
+        $viagens = $this->viagemRepo->findPaginatedFiltered($filtro, $porPagina, $offset);
+
         return $this->view->render($response, 'viagens/index.php', [
-            'viagens' => $viagens
+            'viagens' => $viagens,
+            'totalPaginas' => $totalPaginas,
+            'paginaAtual' => $paginaAtual
         ]);
     }
 
@@ -87,6 +107,7 @@ class ViagemController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
         $usuarioId = (int)($_SESSION['user_id'] ?? 0);
         $detalhes = "Viagem ID: {$id} foi cancelada.";
         $this->auditoriaRepo->registrar('CANCELAMENTO_VIAGEM', $detalhes, $usuarioId);
@@ -94,4 +115,3 @@ class ViagemController
         return $response->withHeader('Location', '/scav/public/viagens')->withStatus(302);
     }
 }
-

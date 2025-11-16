@@ -26,7 +26,7 @@
                     ?>
 
                     <?php if ($perfil === 'Administrador' || $perfil === 'Gestor'): ?>
-                        <li><a href="/scav/public/relatorios"><i class="fas fa-chart-line"></i> Relatórios</a></li>
+                        <li><a href="/scav/public/relatorios/acessos"><i class="fas fa-chart-line"></i> Relatórios</a></li>
                     <?php endif; ?>
 
                     <?php if ($perfil === 'Administrador'): ?>
