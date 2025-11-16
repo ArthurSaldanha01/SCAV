@@ -77,7 +77,7 @@ Tabelas principais:
 
 * **usuarios**
 
-  * `id`, `nome`, `email`, `senha_hash`, `perfil` (`Administrador`, `Gestor`, `Portaria`), `created_at`.
+  * `id`, `nome`, `email`, `senha_hash`, `perfil` (`Administrador`e `Gestor`), `created_at`.
 
 * **veiculos**
 
