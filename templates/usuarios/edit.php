@@ -45,10 +45,6 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <p class="info">A alteração de senha deve ser feita através de um processo de "Esqueci a minha senha" (a ser implementado).</p>
-            </div>
-
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                 <a href="/scav/public/usuarios" class="btn btn-secondary">Cancelar</a>
