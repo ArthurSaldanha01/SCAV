@@ -45,7 +45,6 @@
                     <option value="">Selecione um perfil</option>
                     <option value="Administrador">Administrador</option>
                     <option value="Gestor">Gestor</option>
-                    <option value="Portaria">Portaria</option>
                 </select>
             </div>
 
