@@ -75,15 +75,45 @@ class RelatorioController
         $de = isset($q['de']) ? (new \DateTime($q['de']))->format('Y-m-d 00:00:00') : (new \DateTime('today'))->format('Y-m-d 00:00:00');
         $ate = isset($q['ate']) ? (new \DateTime($q['ate']))->format('Y-m-d 23:59:59') : (new \DateTime('today'))->format('Y-m-d 23:59:59');
 
-        $stmt = $this->pdo->prepare("SELECT DATE(dataHora) dia, tipo, COUNT(*) qtd FROM registros_acesso WHERE dataHora BETWEEN ? AND ? GROUP BY DATE(dataHora), tipo ORDER BY dia ASC, tipo ASC");
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                ra.dataHora,
+                ra.placaDetectada,
+                ra.tipo,
+                ra.viagem_id,
+                v.codigoAutorizacao,
+                v.dataPrevista,
+                ve.modelo AS veiculo_modelo,
+                ve.placa  AS veiculo_placa,
+                m.nome    AS motorista_nome
+            FROM registros_acesso ra
+            LEFT JOIN viagens   v   ON v.id = ra.viagem_id
+            LEFT JOIN veiculos  ve  ON ve.id = v.veiculo_id
+            LEFT JOIN motoristas m  ON m.id = v.motorista_id
+            WHERE ra.dataHora BETWEEN ? AND ?
+            ORDER BY ra.dataHora DESC
+        ");
         $stmt->execute([$de, $ate]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $csv = "dia,tipo,qtd\n";
-        foreach ($rows as $r) $csv .= "{$r['dia']},{$r['tipo']},{$r['qtd']}\n";
+        $csv = "dataHora,placa,tipo,viagem_id,codigoAutorizacao,veiculo_modelo,veiculo_placa,motorista_nome,dataPrevista\n";
+        foreach ($rows as $r) {
+            $diaHora = $r['dataHora'] ?? '';
+            $placa = $r['placaDetectada'] ?? '';
+            $tipo = $r['tipo'] ?? '';
+            $viagemId = $r['viagem_id'] ?? '';
+            $cod = $r['codigoAutorizacao'] ?? '';
+            $modelo = $r['veiculo_modelo'] ?? '';
+            $placaVeic = $r['veiculo_placa'] ?? '';
+            $motorista = $r['motorista_nome'] ?? '';
+            $dataPrev = $r['dataPrevista'] ?? '';
+            $csv .= "{$diaHora},{$placa},{$tipo},{$viagemId},{$cod},{$modelo},{$placaVeic},{$motorista},{$dataPrev}\n";
+        }
+
         $response->getBody()->write($csv);
         return $response->withHeader('Content-Type','text/csv');
     }
+
 
     public function acessosJson(Request $request, Response $response): Response
     {

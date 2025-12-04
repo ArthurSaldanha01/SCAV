@@ -22,8 +22,18 @@
         th { background-color: #e0f2f1; color: #004d40; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .empty-message { text-align: center; color: #777; padding: 20px; }
-        .status { padding: 5px 10px; border-radius: 12px; color: white; font-weight: bold; font-size: 0.8em; text-align: center; }
-        .status-autorizada { background-color: #1976d2; }
+        .status {
+            padding: 6px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+            display: inline-block;
+        }
+        .status-autorizada {
+            background-color: #2e7d32;
+        }
         .status-realizada { background-color: #2e7d32; }
         .status-cancelada { background-color: #757575; }
         .filters { margin: 15px 0; display: flex; justify-content: flex-end; gap: 10px; }
